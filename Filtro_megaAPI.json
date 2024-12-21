@@ -1,0 +1,899 @@
+{
+  "name": "Filtro megaAPI",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "05fa0d96-9e1b-45eb-8e4e-4969f0703c4d",
+      "name": "No Operation, do nothing",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        800,
+        900
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "16e899e2-898c-4b9b-b91b-0ab7d6c9f21e",
+              "leftValue": "={{ $('Webhook').item.json.body.key.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "12744dca-5acb-4b4c-8a97-914f40c30407",
+              "leftValue": "={{ $('Webhook').item.json.body.isGroup }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "db21f646-4dd5-4fa1-9b58-39ea8a1de9c4",
+      "name": "If",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.1,
+      "position": [
+        800,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d73aa49-41d4-4921-b11c-8a59e56ae3b1",
+              "name": "mensagem",
+              "value": "={{ $json.body.message.extendedTextMessage.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a312d959-dce3-461a-877b-3c025ee1727f",
+      "name": "mensagem (extendedTextMessage)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1380,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d73aa49-41d4-4921-b11c-8a59e56ae3b1",
+              "name": "mensagem",
+              "value": "={{ $json.body.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "16a4c747-f9ca-4fd8-b2b5-c690b02b98ff",
+      "name": "mensagem (conversation)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1540,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d73aa49-41d4-4921-b11c-8a59e56ae3b1",
+              "name": "mensagem",
+              "value": "={{ $json.body.message.ephemeralMessage.message.extendedTextMessage.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9ce536b2-3e85-4d82-9e99-50be72791a79",
+      "name": "mensagem (ephemeralMessage)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1720,
+        460
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c27dab1e-3cf4-41cf-8d23-7bbe466321b2",
+              "name": "nome",
+              "value": "={{ $('Webhook').item.json.body.pushName }}",
+              "type": "string"
+            },
+            {
+              "id": "33eeee7e-8a30-487a-b15b-a1a2a9181fdd",
+              "name": "celular",
+              "value": "={{ $('Webhook').item.json.body.key.remoteJid.split('@')[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "7ce5fcad-d59b-489f-b526-6fee81a70128",
+              "name": "Mensagem",
+              "value": "={{ $json.mensagem ?? \"\" }}",
+              "type": "string"
+            },
+            {
+              "id": "c4cd89fa-3037-41d3-b62c-a09bb3fd492f",
+              "name": "base64",
+              "value": "={{ $json.data.split(',')[1] }}",
+              "type": "string"
+            },
+            {
+              "id": "16320fcb-9bf8-4a33-999a-1538c21d4fca",
+              "name": "opcaoSelecionada",
+              "value": "={{ $json.idSelecionado }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8b204835-18f2-4372-82c3-d03eea1200a0",
+      "name": "Infos Manuais",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2420,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apinocode01.megaapi.com.br/rest/instance/downloadMediaMessage/sua instancia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer seu token"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"messageKeys\": {\n        \"mediaKey\": \"{{ $('Webhook').item.json.body.message.audioMessage.mediaKey }}\",\n        \"directPath\": \"{{ $('Webhook').item.json.body.message.audioMessage.directPath }}\",\n        \"url\": \"{{ $('Webhook').item.json.body.message.audioMessage.url }}\",\n        \"mimetype\": \"{{ $('Webhook').item.json.body.message.audioMessage.mimetype }}\",\n        \"messageType\": \"audio\"\n    }\n}",
+        "options": {}
+      },
+      "id": "95a33e6b-e379-45d8-9487-30eb438f2b12",
+      "name": "downloadMediaMessage (audio)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1500,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Tratamento mensagens megaAPI",
+        "height": 134.87209302325584,
+        "width": 546.7209302325583
+      },
+      "id": "9fb37cfc-59f6-4f3d-a02e-6c168d4fb4cf",
+      "name": "Sticky Note",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        520,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tratamento para mensagens de texto",
+        "height": 307.7325581395352,
+        "width": 743.6976744186047,
+        "color": 4
+      },
+      "id": "e2c5bf0a-e788-4b65-af1b-b705569899cb",
+      "name": "Sticky Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tratamento para mensagens audio",
+        "height": 307.7325581395352,
+        "width": 743.6976744186047,
+        "color": 4
+      },
+      "id": "1145861e-e36d-41e1-8fb8-9226684f3fc5",
+      "name": "Sticky Note2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        700
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tratamento para mensagens documentos",
+        "height": 307.7325581395352,
+        "width": 743.6976744186047,
+        "color": 4
+      },
+      "id": "96e66511-e173-4564-aa0b-c2765181ceaa",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1060
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apinocode01.megaapi.com.br/rest/instance/downloadMediaMessage/sua instancia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer seu token"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"messageKeys\": {\n        \"mediaKey\": \"{{ $('Webhook').item.json.body.message.documentMessage.mediaKey }}\",\n        \"directPath\": \"{{ $('Webhook').item.json.body.message.documentMessage.directPath }}\",\n        \"url\": \"{{ $('Webhook').item.json.body.message.documentMessage.url }}\",\n        \"mimetype\": \"{{ $('Webhook').item.json.body.message.documentMessage.mimetype }}\",\n        \"messageType\": \"document\"\n    }\n}",
+        "options": {}
+      },
+      "id": "aa4ad2da-2485-4c20-aec6-44b87af49a0c",
+      "name": "downloadMediaMessage document",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1400,
+        1180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apinocode01.megaapi.com.br/rest/instance/downloadMediaMessage/sua instancia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer seu token"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"messageKeys\": {\n        \"mediaKey\": \"{{ $('Webhook').item.json.body.message.documentWithCaptionMessage.message.documentMessage.mediaKey }}\",\n        \"directPath\": \"{{ $('Webhook').item.json.body.message.documentWithCaptionMessage.message.documentMessage.directPath }}\",\n        \"url\": \"{{ $('Webhook').item.json.body.message.documentWithCaptionMessage.message.documentMessage.url }}\",\n        \"mimetype\": \"{{ $('Webhook').item.json.body.message.documentWithCaptionMessage.message.documentMessage.mimetype }}\",\n        \"messageType\": \"document\"\n    }\n}",
+        "options": {}
+      },
+      "id": "8c8c8636-04b8-433b-ab1c-7ac99ed5b491",
+      "name": "downloadMediaMessage document1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1620,
+        1180
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9d73aa49-41d4-4921-b11c-8a59e56ae3b1",
+              "name": "mensagem",
+              "value": "={{ $('Webhook').item.json.body.message.listResponseMessage.title }}",
+              "type": "string"
+            },
+            {
+              "id": "25665304-f8d0-49de-af8a-b58b6b0d2d7c",
+              "name": "idSelecionado",
+              "value": "={{ $('Webhook').item.json.body.message.listResponseMessage.singleSelectReply.selectedRowId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8378aa40-984e-4dfe-acfe-e0e380d6d99c",
+      "name": "mensagem (listResponseMessage)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1500,
+        1540
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tratamento para mensagens de lista de opções",
+        "height": 307.7325581395352,
+        "width": 743.6976744186047,
+        "color": 4
+      },
+      "id": "416d5593-b251-4e59-8008-98645f5f04f1",
+      "name": "Sticky Note4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1420
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "megaapi",
+        "options": {}
+      },
+      "id": "2511ff60-1d83-4c8f-b5ba-5257467d1ef3",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        560,
+        740
+      ],
+      "webhookId": "4d10e98e-9231-4076-a50f-0421cc8e9e74"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "extendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "extendedTextMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "24e4bfd2-afca-4379-a6fc-ae916e887f1f",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "conversation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "66951b34-2e21-42ea-83ba-3f70dc97be26",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "ephemeralMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ephemeralMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "b8214724-6d2c-4c4c-95b4-ace11e895db0",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audioMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "45494403-5477-4d6c-8e2d-c3ec2826c4ee",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "documentMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "documentMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "39037e6a-5a9e-46d9-98ca-290a5bcd5058",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "documentWithCaptionMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "documentWithCaptionMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "6734dae4-154e-467a-8c5b-07abe5dd20ee",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "listResponseMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "listResponseMessage"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "e968585f-e027-4702-b358-84ab04a44ac5",
+                    "leftValue": "={{ $('Webhook').item.json.body.messageType }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imageMessage"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "9ecd86f7-203a-47d7-bc1a-8fdebe17ac17",
+      "name": "Switch",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.1,
+      "position": [
+        1000,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apinocode01.megaapi.com.br/rest/instance/downloadMediaMessage/sua instancia",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer seu token"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"messageKeys\": {\n        \"mediaKey\": \"{{ $('Webhook').item.json.body.message.imageMessage.mediaKey }}\",\n        \"directPath\": \"{{ $('Webhook').item.json.body.message.imageMessage.directPath }}\",\n        \"url\": \"{{ $('Webhook').item.json.body.message.imageMessage.url }}\",\n        \"mimetype\": \"{{ $('Webhook').item.json.body.message.imageMessage.mimetype }}\",\n        \"messageType\": \"image\"\n    }\n}",
+        "options": {}
+      },
+      "id": "dff53477-c5f7-4ec9-b31a-d45d6040f5cd",
+      "name": "downloadMediaMessage (imagem)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1500,
+        1900
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 8
+      },
+      "id": "44be5427-34bc-4ddf-a3f1-c3ca10d4d774",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2220,
+        840
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Tratamento para mensagens de imagens",
+        "height": 307.7325581395352,
+        "width": 743.6976744186047,
+        "color": 4
+      },
+      "id": "683b3f17-bbc9-44e4-9b77-88460fbb3545",
+      "name": "Sticky Note5",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1200,
+        1780
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apinocode01.megaapi.com.br/rest/sendMessage/sua instancia/listMessage",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer sua instancia"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"messageData\": {\n    \"to\": \"{{ $json.celular }}\",\n    \"buttonText\": \"Escolha\",\n    \"text\": \"Testanto\",\n    \"title\": \"TEste\",\n    \"description\": \"Selecione uma forma de pagamento\",\n    \"sections\": [\n      {\n        \"title\": \"FORMAS DE PAGAMENTO\",\n        \"rows\": [\n          {\n            \"title\": \"PIX\",\n            \"description\": \"pagamento via pix\",\n            \"rowId\": \"01\"\n          },\n          {\n            \"title\": \"BOLETO\",\n            \"description\": \"pagamento via boleto\",\n            \"rowId\": \"02\"\n          }\n        ]\n      }\n    ],\n    \"listType\": 0\n  }\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "b4fb973b-b016-4e56-a319-20c784615781",
+      "name": "Envio de lista de opcoes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        640,
+        1380
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Envio de lista de opções\n- https://apinocode01.megaapi.com.br/rest/sendMessage/sua instance_key/listMessage\n\n### Envie uma mensagem de modelo interativa com listMessage para um usuário do WhatsApp",
+        "height": 344.6476579251196,
+        "width": 498.5067210951673
+      },
+      "id": "b631a6a3-1678-41e5-bdc9-7c9433087c69",
+      "name": "Sticky Note6",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        540,
+        1200
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mensagem (extendedTextMessage)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mensagem (conversation)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "mensagem (ephemeralMessage)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "downloadMediaMessage (audio)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "downloadMediaMessage document": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "downloadMediaMessage document1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "mensagem (listResponseMessage)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "mensagem (extendedTextMessage)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "mensagem (conversation)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "mensagem (ephemeralMessage)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "downloadMediaMessage (audio)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "downloadMediaMessage document",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "downloadMediaMessage document1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "mensagem (listResponseMessage)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "downloadMediaMessage (imagem)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Infos Manuais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "downloadMediaMessage (imagem)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "531e4cf4-03d4-4f81-a4db-d86282ccfad4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "034b52a82d809edd99d77107260afd49cdfe367e3d5c5206f68162e501e12d92"
+  },
+  "id": "1kk8DZ5ddWBekkji",
+  "tags": []
+}
